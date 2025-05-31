@@ -1,16 +1,21 @@
 const shortid = require('shortid');
 const express=require("express");
 let app=express();
-const port=8080;
+const port=8000;
 const mongoose=require("mongoose");
 const path=require("path");
 const List=require("./database/data.js");
+require('dotenv').config();
+
+const URL_DB=process.env.DBurl;
 
 
 app.use(express.static(path.join(__dirname,"public")));
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
 app.use(express.urlencoded({extended:true}));
+
+
 
 
 main()
@@ -20,13 +25,14 @@ main()
 .catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/shortlist');
+  await mongoose.connect(URL_DB);
 }
 
 app.post("/submit",async(req,res)=>{
 let data=req.body;
 console.log(data);
 let code=shortid.generate();
+console.log(code);
 let Lis1= new List({link:data.link , ids:code});
 Lis1.save()
 .then((result)=>{
